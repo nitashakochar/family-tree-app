@@ -15,14 +15,26 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import { Switch } from 'react-router';
+import { Provider } from 'react-redux';
+import { createStore, applyMiddleware, compose } from 'redux';
 import './style.scss';
+import reducers from './reducers';
+import Counter from './containers/counter';
+import Controls from './containers/controls';
+
 
 const About = (props) => {
   return <div> All there is to know about me </div>;
 };
 
 const Welcome = (props) => {
-  return <div>Welcome</div>;
+  return (
+    <div>
+      <div>Welcome</div>
+      <div> <Counter /></div>
+      <div> <Controls /></div>
+    </div>
+  );
 };
 
 const Nav = (props) => {
@@ -46,6 +58,12 @@ const FallBack = (props) => {
   return <div>URL Not Found</div>;
 };
 
+// this creates the store with the reducers, and does some other stuff to initialize devtools
+const store = createStore(reducers, {}, compose(
+  applyMiddleware(),
+  window.devToolsExtension ? window.devToolsExtension() : f => f,
+));
+
 const App = (props) => {
   return (
     <Router>
@@ -63,4 +81,6 @@ const App = (props) => {
 };
 
 
-ReactDOM.render(<App />, document.getElementById('main'));
+ReactDOM.render(<Provider store={store}>
+  <App />
+</Provider>, document.getElementById('main'));
